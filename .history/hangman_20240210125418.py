@@ -25,11 +25,6 @@ class Hangman:
         )
     # build canvas frame method
         self._canvas = self._window["-CANVAS-"]
-        # self._draw_scaffold()
-        # for index in range(MAX_WRONG_GUESSES):
-        #     self._wrong_guesses = index + 1
-        #     self._draw_hanged_man()
-
         self._new_game()
         self.quit = False
         self._played_games = 0
@@ -142,7 +137,7 @@ class Hangman:
     # draw hanged man
     def _draw_hanged_man(self):
         head = (100, 290)
-        torso = [((100, 270), (100, 170))]
+        torso = [(100, 270), (100, 170)]
         left_arm = [
             ((100, 250), (80, 250)),
             ((80, 250), (60, 210)),
@@ -177,7 +172,7 @@ class Hangman:
             self._canvas.DrawCircle(head, 20, fill_color="red", line_width=2)
         elif self._wrong_guesses > 1:
             for part in body[self._wrong_guesses - 2]:
-                self._canvas.DrawLine(*part, color="red", width=4)
+                self._canvas.DrawLine(*part, color="black", width=4)
 
     def _select_word(self):
         with open("words.txt", "r", encoding="utf-8") as file:
@@ -198,16 +193,6 @@ class Hangman:
         self._target_word = self._select_word()
         self._restart_game()
 
-    def _play(self, letter):
-        if letter not in self._target_word:
-            self._wrong_guesses += 1
-        self._guessed_letters.add(letter)
-        self._guessed_word = self._build_guessed_word()
-        # update GUI
-        self._window[f'-letter-{letter}-'].update(disabled=True)
-        self._window[f'-DISPLAY-WORD-'].update(self._guessed_word)
-        self._draw_hanged_man()
-
     def _restart_game(self):
         self._guessed_letters = set()
         self._wrong_guesses = 0
@@ -219,6 +204,16 @@ class Hangman:
         for letter in ascii_uppercase:
             self._window[f"-letter-{letter}-"].update(disabled=False)
         self._window["-DISPLAY-WORD-"].update(self._guessed_word)
+
+    def _play(self, letter):
+        if letter not in self._target_word:
+            self._wrong_guesses += 1
+        self._guessed_letters.add(letter)
+        self._guessed_word = self._build_guessed_word()
+        # update GUI
+        self._window[f'-letter-{letter}-'].update(disabled=True)
+        self._window[f'-DISPLAY-WORD-'].update(self._guessed_word)
+        self._draw_hanged_man()
 
     def read_event(self):
         event = self._window.read()

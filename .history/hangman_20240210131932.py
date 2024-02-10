@@ -142,7 +142,7 @@ class Hangman:
     # draw hanged man
     def _draw_hanged_man(self):
         head = (100, 290)
-        torso = [((100, 270), (100, 170))]
+        torso = [(100, 270), (100, 170)]
         left_arm = [
             ((100, 250), (80, 250)),
             ((80, 250), (60, 210)),
@@ -177,7 +177,7 @@ class Hangman:
             self._canvas.DrawCircle(head, 20, fill_color="red", line_width=2)
         elif self._wrong_guesses > 1:
             for part in body[self._wrong_guesses - 2]:
-                self._canvas.DrawLine(*part, color="red", width=4)
+                self._canvas.DrawLine(*part, color="red", line_width=4)
 
     def _select_word(self):
         with open("words.txt", "r", encoding="utf-8") as file:

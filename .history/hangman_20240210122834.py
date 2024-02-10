@@ -190,6 +190,7 @@ class Hangman:
                 current_words.append(letter)
             else:
                 current_words.append("_")
+
         return " ".join(current_words)
 
     def _new_game(self):

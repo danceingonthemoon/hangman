@@ -61,7 +61,7 @@ class Hangman:
                     font="Courier 20",
                     border_width=0,
                     button_color=(None, sg.theme_background_color()),
-                    key=f"-letter-{letter}-",
+                    key=f"-letter-{letter}",
                     enable_events=True,
                 )
                 for letter in letter_group
@@ -153,15 +153,15 @@ class Hangman:
         ]
 
         left_leg = [
-            ((100, 170), (120, 170)),
+            ((100, 170), (80, 170)),
             ((80, 170),  (70, 140)),
-            ((70, 140),  (70,  80)),
+            ((70, 140),  (70,  90)),
             ((70, 80),   (60, 80)),
         ]
         right_leg = [
             ((100, 170), (120, 170)),
             ((120, 170), (130, 140)),
-            ((130, 140), (130, 80)),
+            ((130, 140), (140, 90)),
             ((130, 80),  (140, 80)),
         ]
         body = [
@@ -169,13 +169,14 @@ class Hangman:
             left_arm,
             right_arm,
             left_leg,
-            right_leg,
+            right_leg
         ]
         if self._wrong_guesses == 1:
             self._canvas.DrawCircle(head, 20, fill_color="red", line_width=2)
         elif self._wrong_guesses > 1:
-            for part in body[self._wrong_guesses - 2]:
-                self._canvas.DrawLine(*part, color="black", width=4)
+            for part in body[:self._wrong_guesses - 2]:
+                for line in part:
+                    self._canvas.DrawLine(*line, color="red", width=2)
 
     def _select_word(self):
         with open("words.txt", "r", encoding="utf-8") as file:
@@ -186,10 +187,11 @@ class Hangman:
     def _build_guessed_word(self):
         current_words = []
         for letter in self._target_word:
-            if letter in self._guessed_letters:
+            if letter in self._guessed_word:
                 current_words.append(letter)
             else:
                 current_words.append("_")
+
         return " ".join(current_words)
 
     def _new_game(self):
@@ -197,7 +199,7 @@ class Hangman:
         self._restart_game()
 
     def _restart_game(self):
-        self._guessed_letters = set()
+        self._guessed_word = set()
         self._wrong_guesses = 0
         self._guessed_word = self._build_guessed_word()
 
@@ -205,16 +207,16 @@ class Hangman:
         self._canvas.erase()
         self._draw_scaffold()
         for letter in ascii_uppercase:
-            self._window[f"-letter-{letter}-"].update(disabled=False)
-        self._window["-DISPLAY-WORD-"].update(self._guessed_word)
+            self._window[f"-letter-{letter}"].update(disabled=False)
+        self.window["-DISPLAY-WORD-"].update(self._guessed_word)
 
     def _play(self, letter):
         if letter not in self._target_word:
             self._wrong_guesses += 1
-        self._guessed_letters.add(letter)
+        self._guessed_word.add(letter)
         self._guessed_word = self._build_guessed_word()
         # update GUI
-        self._window[f'-letter-{letter}-'].update(disabled=True)
+        self._window[f'-letter-{letter}'].update(disabled=True)
         self._window[f'-DISPLAY-WORD-'].update(self._guessed_word)
         self._draw_hanged_man()
 
@@ -235,7 +237,7 @@ class Hangman:
         return any(
             [
                 self._wrong_guesses == MAX_WRONG_GUESSES,
-                set(self._target_word) <= self._guessed_letters,
+                set(self._target_word) <= self._guessed_word,
             ]
         )
 

@@ -169,13 +169,14 @@ class Hangman:
             left_arm,
             right_arm,
             left_leg,
-            right_leg,
+            right_leg
         ]
         if self._wrong_guesses == 1:
             self._canvas.DrawCircle(head, 20, fill_color="red", line_width=2)
         elif self._wrong_guesses > 1:
-            for part in body[self._wrong_guesses - 2]:
-                self._canvas.DrawLine(*part, color="black", width=4)
+            for part in body[:self._wrong_guesses - 2]:
+                for line in part:
+                    self._canvas.DrawLine(*line, color="red", width=2)
 
     def _select_word(self):
         with open("words.txt", "r", encoding="utf-8") as file:
@@ -190,6 +191,7 @@ class Hangman:
                 current_words.append(letter)
             else:
                 current_words.append("_")
+
         return " ".join(current_words)
 
     def _new_game(self):
